@@ -55,106 +55,132 @@ const DashbaordPage = async () => {
   const data = await getData(session.user?.id as string);
 
   return (
-    <>
-      <div className="flex items-center justify-between px-2">
-        <div className="sm:grid gap-1 hidden">
-          <h1 className="font-heading text-3xl md:text-4xl">Event Types</h1>
-          <p className="text-lg text-muted-foreground">
-            Create and manage your event types.
-          </p>
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="font-bold text-4xl md:text-5xl text-gray-900 dark:text-gray-100">
+              Event Types
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+              Create and manage your event types.
+            </p>
+          </div>
+          <Button
+            variant="primary"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-md px-4 py-2"
+            asChild
+          >
+            <Link href="/dashboard/new">Create New Event</Link>
+          </Button>
         </div>
-        <Button asChild>
-          <Link href="/dashboard/new">Create New Event</Link>
-        </Button>
-      </div>
-      {data.EventType.length === 0 ? (
-        <EmptyState
-          title="You have no Event Types"
-          description="You can create your first event type by clicking the button below."
-          buttonText="Add Event Type"
-          href="/dashboard/new"
-        />
-      ) : (
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {data.EventType.map((item) => (
-            <div
-              className="  overflow-hidden shadow rounded-lg border relative"
-              key={item.id}
-            >
-              <div className="absolute top-2 right-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <Settings className="size-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-20" align="end">
-                    <DropdownMenuLabel>Event</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuGroup>
+        {data.EventType.length === 0 ? (
+          <EmptyState
+            title="You have no Event Types"
+            description="You can create your first event type by clicking the button above."
+            buttonText="Add Event Type"
+            href="/dashboard/new"
+          />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.EventType.map((item) => (
+              <div
+                className="bg-white dark:bg-gray-800 overflow-hidden shadow-lg rounded-lg border relative"
+                key={item.id}
+              >
+                <div className="absolute top-4 right-4">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md p-2"
+                      >
+                        <Settings className="h-5 w-5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-48" align="end">
+                      <DropdownMenuLabel className="text-gray-700 dark:text-gray-300 font-medium">
+                        Event
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/${data.username}/${item.url}`}
+                            className="text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center px-4 py-2 rounded-md"
+                          >
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            <span>Preview</span>
+                          </Link>
+                        </DropdownMenuItem>
+                        <CopyLinkMenuItem
+                          meetingUrl={`${process.env.NEXT_PUBLIC_URL}/${data.username}/${item.url}`}
+                        />
+                        <DropdownMenuItem asChild>
+                          <Link
+                            href={`/dashboard/event/${item.id}`}
+                            className="text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center px-4 py-2 rounded-md"
+                          >
+                            <Pen className="mr-2 h-4 w-4" />
+                            <span>Edit</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href={`/${data.username}/${item.url}`}>
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          <span>Preview</span>
+                        <Link
+                          href={`/dashboard/event/${item.id}/delete`}
+                          className="text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-700 flex items-center px-4 py-2 rounded-md"
+                        >
+                          <Trash className="mr-2 h-4 w-4" />
+                          <span>Delete</span>
                         </Link>
                       </DropdownMenuItem>
-                      <CopyLinkMenuItem
-                        meetingUrl={`${process.env.NEXT_PUBLIC_URL}/${data.username}/${item.url}`}
-                      />
-                      <DropdownMenuItem asChild>
-                        <Link href={`/dashboard/event/${item.id}`}>
-                          <Pen className="mr-2 h-4 w-4" />
-                          <span>Edit</span>
-                        </Link>
-                      </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link href={`/dashboard/event/${item.id}/delete`}>
-                        <Trash className="mr-2 h-4 w-4" />
-                        <span>Delete</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
 
-              <Link href={`/dashboard/event/${item.id}`}>
-                <div className="p-5">
+                <Link
+                  href={`/dashboard/event/${item.id}`}
+                  className="block p-6 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                >
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
-                      <Users2 className="h-6 w-6" aria-hidden="true" />
+                      <Users2 className="h-6 w-6 text-gray-500 dark:text-gray-400" />
                     </div>
                     <div className="ml-5 w-0 flex-1">
                       <dl>
-                        <dt className="text-sm font-medium truncate ">
+                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
                           {item.duration} Minutes Meeting
                         </dt>
                         <dd>
-                          <div className="text-lg font-medium ">
+                          <div className="text-lg font-medium text-gray-900 dark:text-gray-100">
                             {item.title}
                           </div>
                         </dd>
                       </dl>
                     </div>
                   </div>
-                </div>
-              </Link>
-              <div className="bg-muted dark:bg-gray-900 px-5 py-3 flex justify-between items-center">
-                <MenuActiveSwitcher
-                  initialChecked={item.active}
-                  eventTypeId={item.id}
-                />
-
-                <Link href={`/dashboard/event/${item.id}`}>
-                  <Button className="">Edit Event</Button>
                 </Link>
+                <div className="bg-gray-100 dark:bg-gray-800 px-6 py-4 flex justify-between items-center">
+                  <MenuActiveSwitcher
+                    initialChecked={item.active}
+                    eventTypeId={item.id}
+                  />
+
+                  <Button
+                    variant="secondary"
+                    className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-md px-4 py-2"
+                  >
+                    <Link href={`/dashboard/event/${item.id}`}>Edit Event</Link>
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
